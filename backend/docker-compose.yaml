@@ -1,4 +1,3 @@
-
 services:
   db:
     image: postgres:15
@@ -24,14 +23,12 @@ services:
       - db
     command: >
       sh -c "until pg_isready -h db -p 5432 -U ${POSTGRES_USER}; do
-             echo '⏳ waiting for db...';
-             sleep 2;
-           done;
-           node index.js"
+               echo '⏳ waiting for db...';
+               sleep 2;
+             done;
+             node index.js"
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_HOST: db
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+
 volumes:
   postgres_data:
