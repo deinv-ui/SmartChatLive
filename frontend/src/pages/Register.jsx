@@ -4,6 +4,7 @@ import { useAuthStore } from "../store/authStore";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 
 const schema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters"),
@@ -27,8 +28,10 @@ const Register = () => {
   };
 
   return (
-<div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-lime-300 via-lime-400 to-green-500
-">
+    <div
+      className="flex min-h-screen items-center justify-center bg-gradient-to-br from-lime-300 via-lime-400 to-green-500
+"
+    >
       <div className="bg-white p-8 rounded-2xl shadow-2xl w-96">
         <div className="flex justify-center mb-6">
           <div className="bg-green-500 text-white font-bold text-2xl rounded-full w-16 h-16 flex items-center justify-center">
