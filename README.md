@@ -1,6 +1,6 @@
 # 💬 SmartChat Live
 
-SmartChat Live is a **real-time group chat app** built with **Node.js + Socket.IO**, enhanced with an **AI assistant** that can join conversations, answer questions, and summarize discussions.
+SmartChat Live is a **real-time group chat app** built with **Node.js + Kafka**, enhanced with an **AI assistant** that can join conversations, answer questions, and summarize discussions.
 
 Front End
 // npm run dev
@@ -22,24 +22,24 @@ Enter Postgres SQL
 - 👤 User join/leave notifications  
 - 🤖 AI Assistant bot (powered by OpenAI or Hugging Face APIs)  
 - ✍️ Typing indicators  
-- 💾 Optional chat history persistence (SQLite/Postgres/MongoDB)  
+- 💾 Optional chat history persistence (Postgres)  
 - 📱 Works across web and mobile clients  
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Backend**: Node.js, Express, Socket.IO  
-- **Frontend**: React
+- **Backend**: Node.js, Express, Kafka, ZooKeeper 
+- **Frontend**: React, Typescript
 - **AI Integration**: OpenAI API (ChatGPT) / Hugging Face Inference API  
-- **Database (optional)**: Postgres
+- **Database**: Postgres
 
 ---
 
 ## 📂 Project Structure
 smartchatlive/
 │
-├── server/ # Node.js + Socket.IO backend
+├── server/ # Node.js + Kafka backend
 │ ├── index.js # Express + Socket.IO setup
 │ ├── ai.js # AI API integration logic
 │ └── package.json
