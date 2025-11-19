@@ -28,7 +28,8 @@
     "jsonwebtoken": "^9.0.2",
     "kafkajs": "^2.2.4",
     "module-alias": "^2.2.3",
-    "pg": "^8.16.3"
+    "pg": "^8.16.3",
+    "socket.io": "^4.8.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"

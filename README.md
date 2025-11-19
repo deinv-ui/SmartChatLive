@@ -2,6 +2,18 @@
 
 SmartChat Live is a **real-time group chat app** built with **Node.js + Socket.IO**, enhanced with an **AI assistant** that can join conversations, answer questions, and summarize discussions.
 
+Front End
+// npm run dev
+Kafka
+//docker-compose -f kafka-docker-compose.yml up -d
+Docker
+// docker compose up
+Stop the container running
+// docker compose down
+Clear cache for backend logic
+// docker compose build --no-cache
+Enter Postgres SQL
+// docker exec -it postgres_db psql -U smartchat -d smartchatdb
 ---
 
 ## 🚀 Features

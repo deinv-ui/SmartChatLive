@@ -3,6 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import compression from "compression";
 import dotenv from "dotenv";
+import  { initSocket } from "./src/socket.js"
 
 import authRoutes from "./routes/auth.js";
 
@@ -24,6 +25,8 @@ app.use(helmet());
 app.use(compression());
 app.use(express.json());
 
+const server = http.createServer(app);
+const io = initSocket(server);
 // Health check route
 app.get("/", (req, res) => {
   res.json({ message: "Backend running!!" });
