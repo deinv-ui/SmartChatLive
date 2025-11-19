@@ -1,16 +1,20 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../store/authStore";
+import { useAuthStore } from "../store/authStore.js";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
+import { Schema } from "zod/v3";
 
 const schema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
-const Register = () => {
+
+type FormData = z.infer<typeof schema>;
+
+const Register: React.FC = () => {
   const { register: registerUser, loading, error } = useAuthStore();
   const navigate = useNavigate();
 
@@ -18,11 +22,11 @@ const Register = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<FormData>({
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = async (form) => {
+  const onSubmit = async (form: FormData) => {
     const success = await registerUser(form);
     if (success) navigate("/chat");
   };
@@ -53,7 +57,6 @@ const Register = () => {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <input
             type="text"
-            name="username"
             placeholder="Username"
             {...register("username")}
             className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-400 transition"
@@ -66,7 +69,6 @@ const Register = () => {
           <div>
             <input
               type="password"
-              name="password"
               placeholder="Password"
               {...register("password")}
               className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-400 transition"

@@ -1,5 +1,5 @@
-import Login from "./pages/Login";
-import Register from "./pages/Register";
+import Login from "./pages/Login.js";
+import Register from "./pages/Register.jsx";
 import './index.css';
 
 function App() {

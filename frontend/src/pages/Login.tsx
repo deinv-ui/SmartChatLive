@@ -1,28 +1,35 @@
-import { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../store/authStore";
-import { useForm } from "react-hook-form";
+import { useAuthStore } from "../store/authStore.js";
 import { z } from "zod";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+// Zod schema
 const schema = z.object({
   username: z.string().min(1, "Username is required"),
   password: z.string().min(1, "Password is required"),
 });
 
-const Login = () => {
-  const { loginUser, loading, error } = useAuthStore();
+// TypeScript type inferred from Zod schema
+type FormData = z.infer<typeof schema>;
+
+const Login: React.FC = () => {
+  const { login, loading, error } = useAuthStore();
   const navigate = useNavigate();
 
+  // react-hook-form setup
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<FormData>({
     resolver: zodResolver(schema),
   });
-  const onSubmit = async (form) => {
-    const success = await loginUser(form);
+
+  // Submit handler with proper type
+  const onSubmit = async (form: FormData) => {
+    const success = await login(form);
     if (success) navigate("/chat");
   };
 
@@ -50,7 +57,6 @@ const Login = () => {
           <div>
             <input
               type="text"
-              name="username"
               placeholder="Username"
               {...register("username")}
               className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-400 transition"
@@ -64,7 +70,6 @@ const Login = () => {
           <div>
             <input
               type="password"
-              name="password"
               placeholder="Password"
               {...register("password")}
               className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-400 transition"

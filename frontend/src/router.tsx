@@ -1,14 +1,13 @@
-// src/router.jsx
 import { createBrowserRouter } from "react-router-dom";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Chat from "./pages/Chat";
-import ProtectedRoute from "./components/ProtectedRoute";
+import Login from "./pages/Login.js";
+import Register from "./pages/Register.jsx";
+import Chat from "./pages/Chat.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <Login />, // default to login page
+    element: <Login />,
   },
   {
     path: "/login",

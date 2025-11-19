@@ -1,11 +1,15 @@
 import pkg from "pg";
 const { Pool } = pkg;
+const { Pool } = require("pg");
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false, // required by Render's Postgres
-  },
+   user: process.env.POSTGRES_USER,
+  host: process.env.POSTGRES_HOST || 'db', // Docker service name
+  database: process.env.POSTGRES_DB,
+  password: process.env.POSTGRES_PASSWORD,
+  port: process.env.POSTGRES_PORT || 5432,
+  ssl: false,
 });
 
 // Debug connection
