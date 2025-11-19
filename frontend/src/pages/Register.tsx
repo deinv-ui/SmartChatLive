@@ -8,7 +8,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Schema } from "zod/v3";
 
 const schema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters"),
+  email: z.string().min(3, "Email must be at least 3 characters"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
@@ -57,13 +57,13 @@ const Register: React.FC = () => {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <input
             type="text"
-            placeholder="Username"
-            {...register("username")}
+            placeholder="email"
+            {...register("email")}
             className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-400 transition"
           />
-          {errors.username && (
+          {errors.email && (
             <p className="text-red-500 text-sm mt-1">
-              {errors.username.message}
+              {errors.email.message}
             </p>
           )}
           <div>

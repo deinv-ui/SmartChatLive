@@ -1,6 +1,6 @@
-// src/services/api.ts
 const API_URL: string = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
 
+/** Generic fetch helper */
 interface RequestOptions extends RequestInit {
   headers?: Record<string, string>;
 }
@@ -16,29 +16,39 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
 
   if (!res.ok) {
     const error = await res.json().catch(() => ({}));
-    throw new Error((error as any).message || "Request failed");
+    throw new Error((error as any).error || "Request failed");
   }
 
   return res.json();
 }
 
-// Types for API payloads
+// --------------------
+// Payload Types
+// --------------------
 export interface UserData {
-  username: string;
+  email: string;
   password: string;
+  user_type?: string;
 }
 
 export interface Credentials {
-  username: string;
+  email: string;
   password: string;
 }
 
 export interface AuthResponse {
-  user?: { username: string; [key: string]: any };
+  user?: {
+    id: number;
+    username: string;
+    email: string;
+    user_type: string;
+  };
   token: string;
 }
 
-// API functions
+// --------------------
+// API Calls
+// --------------------
 export function registerUser(userData: UserData): Promise<AuthResponse> {
   return request<AuthResponse>("/api/auth/register", {
     method: "POST",
@@ -53,6 +63,6 @@ export function loginUser(credentials: Credentials): Promise<AuthResponse> {
   });
 }
 
-export function fetchMessage(): Promise<any> {
+export function fetchMessages(): Promise<any> {
   return request<any>("/");
 }

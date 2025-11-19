@@ -1,9 +1,8 @@
-// src/store/authStore.ts
 import { create } from "zustand";
 import { loginUser, registerUser, UserData, Credentials, AuthResponse } from "../services/api.js";
 
 interface AuthState {
-  user: { username: string; [key: string]: any } | null;
+  user: { id: number; email: string; user_type: string; [key: string]: any } | null;
   token: string | null;
   loading: boolean;
   error: string | null;
@@ -25,13 +24,13 @@ export const useAuthStore = create<AuthState>((set) => ({
       const data: AuthResponse = await loginUser(credentials);
       localStorage.setItem("token", data.token);
       set({
-        user: data.user || { username: credentials.username },
+        user: data.user || { id: 0, username: credentials.email, email: credentials.email, user_type: "user" },
         token: data.token,
         loading: false,
       });
       return true;
     } catch (err: any) {
-      set({ error: err.message || "Login failed", loading: false });
+      set({ error: err?.message || "Login failed", loading: false });
       return false;
     }
   },
@@ -42,13 +41,13 @@ export const useAuthStore = create<AuthState>((set) => ({
       const data: AuthResponse = await registerUser(userData);
       localStorage.setItem("token", data.token);
       set({
-        user: data.user || { username: userData.username },
+        user: data.user || { id: 0, email: userData.email, user_type: userData.user_type || "user" },
         token: data.token,
         loading: false,
       });
       return true;
     } catch (err: any) {
-      set({ error: err.message || "Registration failed", loading: false });
+      set({ error: err?.message || "Registration failed", loading: false });
       return false;
     }
   },

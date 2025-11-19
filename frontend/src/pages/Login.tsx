@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 // Zod schema
 const schema = z.object({
-  username: z.string().min(1, "Username is required"),
+  email: z.string().min(1, "Email is required"),
   password: z.string().min(1, "Password is required"),
 });
 
@@ -57,13 +57,13 @@ const Login: React.FC = () => {
           <div>
             <input
               type="text"
-              placeholder="Username"
-              {...register("username")}
+              placeholder="email"
+              {...register("email")}
               className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-400 transition"
             />
-            {errors.username && (
+            {errors.email && (
               <p className="text-red-500 text-sm mt-1">
-                {errors.username.message}
+                {errors.email.message}
               </p>
             )}
           </div>
