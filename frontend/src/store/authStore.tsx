@@ -1,9 +1,17 @@
+// src/store/authStore.ts
 import { create } from "zustand";
 import { loginUser, registerUser, UserData, Credentials, AuthResponse } from "../services/api.js";
 
+interface User {
+  id: number;
+  email: string;
+  user_type: string;
+  [key: string]: any;
+}
+
 interface AuthState {
-  user: { id: number; email: string; user_type: string; [key: string]: any } | null;
-  token: string | null;
+  user: User;
+  token: string;
   loading: boolean;
   error: string | null;
 
@@ -12,9 +20,12 @@ interface AuthState {
   logout: () => void;
 }
 
+// Fallback user when no real user yet
+const defaultUser: User = { id: 0, email: "", user_type: "user" };
+
 export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
-  token: localStorage.getItem("token") || null,
+  user: defaultUser,
+  token: localStorage.getItem("token") || "",
   loading: false,
   error: null,
 
@@ -22,12 +33,9 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ loading: true, error: null });
     try {
       const data: AuthResponse = await loginUser(credentials);
+      const loggedInUser: User = data.user || { id: 0, email: credentials.email, user_type: "user" };
       localStorage.setItem("token", data.token);
-      set({
-        user: data.user || { id: 0, username: credentials.email, email: credentials.email, user_type: "user" },
-        token: data.token,
-        loading: false,
-      });
+      set({ user: loggedInUser, token: data.token, loading: false });
       return true;
     } catch (err: any) {
       set({ error: err?.message || "Login failed", loading: false });
@@ -39,12 +47,9 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ loading: true, error: null });
     try {
       const data: AuthResponse = await registerUser(userData);
+      const registeredUser: User = data.user || { id: 0, email: userData.email, user_type: userData.user_type || "user" };
       localStorage.setItem("token", data.token);
-      set({
-        user: data.user || { id: 0, email: userData.email, user_type: userData.user_type || "user" },
-        token: data.token,
-        loading: false,
-      });
+      set({ user: registeredUser, token: data.token, loading: false });
       return true;
     } catch (err: any) {
       set({ error: err?.message || "Registration failed", loading: false });
@@ -54,6 +59,6 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   logout: () => {
     localStorage.removeItem("token");
-    set({ user: null, token: null });
+    set({ user: defaultUser, token: "" });
   },
 }));

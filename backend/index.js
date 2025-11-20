@@ -4,8 +4,10 @@ import helmet from "helmet";
 import compression from "compression";
 import dotenv from "dotenv";
 import  { initSocket } from "./src/socket.js"
-
+import { connectProducer } from "./src/kafka/producer.js";
+import { connectConsumer } from "./src/kafka/consumer.js";
 import authRoutes from "./routes/auth.js";
+import chatRoutes from "./routes/chat.js";
 
 // Load environment variables FIRST
 dotenv.config();
@@ -34,6 +36,8 @@ app.get("/", (req, res) => {
 
 // Auth routes
 app.use("/api/auth", authRoutes);
+app.use("/api/chat", chatRoutes);
+
 
 const PORT = process.env.BACKEND_PORT || 5000;
 

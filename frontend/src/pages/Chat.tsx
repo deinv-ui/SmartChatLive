@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-import { io as ioClient, Socket } from "socket.io-client";
+import { io as ioClient } from "socket.io-client";
+import type { Socket } from "socket.io-client";
 import { useAuthStore } from "../store/authStore.js";
 
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:5000";
@@ -13,17 +14,18 @@ type Msg = {
 const Chat = () => {
   const currentUser = useAuthStore((state) => state.user);
   const token = useAuthStore((state) => state.token);
+
   const [messages, setMessages] = useState<Msg[]>([]);
   const [newMessage, setNewMessage] = useState("");
+
   const socketRef = useRef<Socket | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!currentUser) return;
 
-    // Connect with token auth
     const socket = ioClient(SOCKET_URL, {
-      auth: { token }, // optional: send token during handshake
+      auth: { token },
       transports: ["websocket"],
     });
 
@@ -33,17 +35,12 @@ const Chat = () => {
       console.log("Socket connected", socket.id);
     });
 
-    // receive new chat messages broadcast from backend
     socket.on("chat:message", (msg: Msg) => {
       setMessages((prev) => [...prev, msg]);
     });
 
-    socket.on("chat:sent", (msg: Msg) => {
-      // ack for messages sent by this client (optional)
-    });
-
     socket.on("chat:error", (err) => {
-      console.error("Socket chat error:", err);
+      console.error("Socket error:", err);
     });
 
     return () => {
@@ -52,7 +49,6 @@ const Chat = () => {
     };
   }, [currentUser, token]);
 
-  // scroll to bottom on messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -60,23 +56,20 @@ const Chat = () => {
   const handleSend = () => {
     if (!newMessage.trim()) return;
     const socket = socketRef.current;
-    const payload = { content: newMessage };
 
     if (socket && socket.connected) {
-      socket.emit("chat:send", payload);
-      // optional optimistic UI: add immediately
+      socket.emit("chat:send", { content: newMessage });
+      
+      // Optimistic UI
       setMessages((prev) => [
         ...prev,
-        { email: currentUser.email, content: newMessage, timestamp: new Date().toISOString() },
+        {
+          email: currentUser.email,
+          content: newMessage,
+          timestamp: new Date().toISOString(),
+        },
       ]);
-      setNewMessage("");
-    } else {
-      // fallback: call REST API (POST /api/chat/send) as temporary queue
-      fetch("/api/chat/send", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ email: currentUser.email, content: newMessage }),
-      });
+
       setNewMessage("");
     }
   };
@@ -99,10 +92,16 @@ const Chat = () => {
                   {msg.email[0].toUpperCase()}
                 </div>
               )}
-              <div className={`px-4 py-2 max-w-xs break-words rounded-2xl ${isSelf ? "bg-blue-500 text-white" : "bg-white text-gray-800"}`}>
+
+              <div
+                className={`px-4 py-2 max-w-xs break-words rounded-2xl ${
+                  isSelf ? "bg-blue-500 text-white" : "bg-white text-gray-800"
+                }`}
+              >
                 {!isSelf && <div className="text-xs text-gray-500 mb-1">{msg.email}</div>}
                 {msg.content}
               </div>
+
               {isSelf && (
                 <div className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ml-2 bg-blue-400">
                   {currentUser.email[0].toUpperCase()}
@@ -120,7 +119,7 @@ const Chat = () => {
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder="Type your message..."
-          className="flex-1 px-4 py-2 rounded-l-2xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="flex-1 px-4 py-2 rounded-l-2xl border border-gray-300 focus:outline-none"
           onKeyDown={(e) => e.key === "Enter" && handleSend()}
         />
         <button onClick={handleSend} className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-r-2xl">
